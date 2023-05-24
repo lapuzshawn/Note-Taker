@@ -6,28 +6,40 @@ const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
 class Store {
-  // Read from the db.json file
-  read() {
-    return readFile('db/db.json', 'utf8');
-  }
+// Read from the db.json file
+read() {
+  console.log('Reading from db.json file');
+  return readFile('db/db.json', 'utf8');
+}
+
 
   // Write to the db.json file
   write(note) {
-    return writeFile('db/db.json', JSON.stringify(note));
+    console.log('note:', note);
+    const json = JSON.stringify(note);
+
+    console.log('json:', json);
+    return writeFile('db/db.json', json);
   }
 
   // Get all notes
   async getNotes() {
     const notes = await this.read();
+
+    console.log(`Notes read: ${notes}`);
     let parsedNotes;
     try {
       parsedNotes = JSON.parse(notes);
       if (!Array.isArray(parsedNotes)) { // Checks if parsedNotes is an array
+        console.log("..parsed notes is not an array..");
         parsedNotes = [];
       }
     } catch (err) {
+      console.log(`Error parsing: ${err}`);
       parsedNotes = [];
     }
+
+    console.log(`Parsed notes: ${parsedNotes}`);
     return parsedNotes;
   }
 
@@ -65,7 +77,6 @@ class Store {
   
     const filteredNotes = notes.filter((note) => note.id !== id);
     console.log("Writing filtered notes..");
-    
   return await this.write(filteredNotes);
 }
 }
